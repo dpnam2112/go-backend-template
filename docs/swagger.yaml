@@ -1,0 +1,128 @@
+basePath: /
+definitions:
+  dto.APIResponse-dto_UserResponse:
+    properties:
+      data:
+        allOf:
+        - $ref: '#/definitions/dto.UserResponse'
+        description: Data payload (generic)
+      status:
+        description: HTTP Status Code
+        type: integer
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      name:
+        description: Name is required
+        type: string
+    required:
+    - name
+    type: object
+  dto.UserResponse:
+    properties:
+      id:
+        description: UUID is required (automatically generated)
+        type: string
+      name:
+        description: Name is required
+        type: string
+    type: object
+info:
+  contact:
+    email: dpnam2112@gmail.com
+    name: Support Team
+    url: https://github.com/dpnam2112
+  description: This is a backend template for building scalable and modular Go applications.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  title: dpnam2112's Go Backend Template
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: Health check endpoint
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ping the server
+      tags:
+      - Health
+  /v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with name and email
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.APIResponse-dto_UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new user object
+      tags:
+      - users
+  /v1/users/:id:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.APIResponse-dto_UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Retrieve user information based on the given ID
+      tags:
+      - users
+schemes:
+- http
+- https
+swagger: "2.0"
