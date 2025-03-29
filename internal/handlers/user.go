@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/dpnam2112/go-backend-template/internal/dto"
@@ -13,12 +14,13 @@ import (
 
 // UserHandler struct
 type UserHandler struct {
-	UserRepo repositories.UserRepository
+	uowFactory *repositories.UnitOfWorkFactory
+	UserRepo *repositories.UserRepository
 }
 
 // NewUserHandler initializes a new UserHandler
-func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
-	return &UserHandler{UserRepo: *userRepo}
+func NewUserHandler(userRepo *repositories.UserRepository, uowFactory *repositories.UnitOfWorkFactory) *UserHandler {
+	return &UserHandler{UserRepo: userRepo, uowFactory: uowFactory}
 }
 
 // GetUser retrieve a specific user object
@@ -38,7 +40,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User's ID must be a valid UUID."})
 		return
 	}
-
+	
 	user, err := h.UserRepo.GetUserByID(context.Background(), id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -74,11 +76,31 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.UserRepo.CreateUser(context.Background(), req.Name)
+	txCtx := context.Background()
+
+	// Create a new business transaction.
+	uow, err := h.uowFactory.Create(txCtx)
+	if err != nil {
+		log.Fatalln("failed to create a transaction")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error"})
+		return
+	}
+
+	defer uow.Rollback(txCtx)
+
+	// Transaction context.
+	// Create a new repository which is bound with the unit of work.
+	uowUserRepo := h.UserRepo.WithUnitOfWork(uow)
+	user, err := uowUserRepo.CreateUser(context.Background(), req.Name)
+
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "An error ocurred."})
 		return
 	}
+
+	// Commit the business transaction.
+	uow.Commit(txCtx)
+
 
 	c.JSON(http.StatusOK, dto.APIResponse[dto.UserResponse]{
 		Status: http.StatusOK,

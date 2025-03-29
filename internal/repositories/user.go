@@ -44,3 +44,8 @@ func (r *UserRepository) CreateUser(ctx context.Context, name string) (*models.U
 		Name: user.Name,
 	}, nil
 }
+
+func (r *UserRepository) WithUnitOfWork(uow *UnitOfWork) *UserRepository {
+	userRepo := UserRepository{r.queries.WithTx(uow.tx)}
+	return &userRepo
+}

@@ -8,8 +8,8 @@ import (
 )
 
 // ProvideUserHandler initializes the user handler
-func ProvideUserHandler(userRepo *repositories.UserRepository) *handlers.UserHandler {
-	return handlers.NewUserHandler(userRepo)
+func ProvideUserHandler(userRepo *repositories.UserRepository, uowFactory *repositories.UnitOfWorkFactory) *handlers.UserHandler {
+	return handlers.NewUserHandler(userRepo, uowFactory)
 }
 
 // HandlersModule provides all HTTP handlers
