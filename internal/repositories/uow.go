@@ -11,14 +11,13 @@ import (
 
 // UnitOfWork implements UnitOfWork using pgx
 type UnitOfWork struct {
-	tx   pgx.Tx
+	tx pgx.Tx
 }
 
 // NewUnitOfWork initializes a new UnitOfWork with the given pool
 func NewUnitOfWork(tx pgx.Tx) *UnitOfWork {
 	return &UnitOfWork{tx: tx}
 }
-
 
 // Commit commits the transaction
 func (u *UnitOfWork) Commit(ctx context.Context) error {
@@ -50,12 +49,12 @@ func (u *UnitOfWork) Rollback(ctx context.Context) error {
 
 // UnitOfWorkFactory is responsible for creating UnitOfWork instances
 type UnitOfWorkFactory struct {
-    pool *pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
 // NewUnitOfWorkFactory creates a new UnitOfWorkFactory
 func NewUnitOfWorkFactory(pool *pgxpool.Pool) *UnitOfWorkFactory {
-    return &UnitOfWorkFactory{pool: pool}
+	return &UnitOfWorkFactory{pool: pool}
 }
 
 // Create creates a new UnitOfWork instance
@@ -65,5 +64,5 @@ func (f *UnitOfWorkFactory) Create(ctx context.Context) (*UnitOfWork, error) {
 	if err != nil {
 		return nil, err
 	}
-    return NewUnitOfWork(tx), nil
+	return NewUnitOfWork(tx), nil
 }

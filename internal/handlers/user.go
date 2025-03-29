@@ -15,7 +15,7 @@ import (
 // UserHandler struct
 type UserHandler struct {
 	uowFactory *repositories.UnitOfWorkFactory
-	UserRepo *repositories.UserRepository
+	UserRepo   *repositories.UserRepository
 }
 
 // NewUserHandler initializes a new UserHandler
@@ -40,7 +40,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User's ID must be a valid UUID."})
 		return
 	}
-	
+
 	user, err := h.UserRepo.GetUserByID(context.Background(), id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
@@ -100,7 +100,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	// Commit the business transaction.
 	uow.Commit(txCtx)
-
 
 	c.JSON(http.StatusOK, dto.APIResponse[dto.UserResponse]{
 		Status: http.StatusOK,

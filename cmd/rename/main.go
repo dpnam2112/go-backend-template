@@ -110,4 +110,3 @@ func main() {
 
 	fmt.Println("Project renamed successfully to:", newModule)
 }
-
