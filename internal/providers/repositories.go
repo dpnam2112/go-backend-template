@@ -12,9 +12,15 @@ func ProvideUserRepository(dbPool *pgxpool.Pool) *repositories.UserRepository {
 	return repositories.NewUserRepository(dbPool)
 }
 
+func ProvideUnitOfWorkFactory(dbPool *pgxpool.Pool) *repositories.UnitOfWorkFactory {
+	uowFactory := repositories.NewUnitOfWorkFactory(dbPool)
+	return uowFactory
+}
+
 // RepositoryModule provides all repositories
 var RepositoriesModule = fx.Module("repositories",
 	fx.Provide(
 		ProvideUserRepository,
+		ProvideUnitOfWorkFactory,
 	),
 )
