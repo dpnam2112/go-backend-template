@@ -1,6 +1,8 @@
 package providers
 
 import (
+	"log/slog"
+
 	"github.com/dpnam2112/go-backend-template/internal/handlers"
 	"github.com/dpnam2112/go-backend-template/internal/repositories"
 
@@ -8,8 +10,8 @@ import (
 )
 
 // ProvideUserHandler initializes the user handler
-func ProvideUserHandler(userRepo *repositories.UserRepository, uowFactory *repositories.UnitOfWorkFactory) *handlers.UserHandler {
-	return handlers.NewUserHandler(userRepo, uowFactory)
+func ProvideUserHandler(userRepo *repositories.UserRepository, uowFactory *repositories.UnitOfWorkFactory, logger *slog.Logger) *handlers.UserHandler {
+	return handlers.NewUserHandler(userRepo, uowFactory, logger)
 }
 
 // HandlersModule provides all HTTP handlers

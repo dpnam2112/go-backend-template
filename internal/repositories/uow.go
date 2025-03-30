@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -59,7 +58,6 @@ func NewUnitOfWorkFactory(pool *pgxpool.Pool) *UnitOfWorkFactory {
 
 // Create creates a new UnitOfWork instance
 func (f *UnitOfWorkFactory) Create(ctx context.Context) (*UnitOfWork, error) {
-	log.Println("create a new unit of work")
 	tx, err := f.pool.Begin(ctx)
 	if err != nil {
 		return nil, err

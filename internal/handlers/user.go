@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/dpnam2112/go-backend-template/internal/dto"
@@ -15,12 +16,13 @@ import (
 // UserHandler struct
 type UserHandler struct {
 	uowFactory *repositories.UnitOfWorkFactory
+	Logger		*slog.Logger
 	UserRepo   *repositories.UserRepository
 }
 
 // NewUserHandler initializes a new UserHandler
-func NewUserHandler(userRepo *repositories.UserRepository, uowFactory *repositories.UnitOfWorkFactory) *UserHandler {
-	return &UserHandler{UserRepo: userRepo, uowFactory: uowFactory}
+func NewUserHandler(userRepo *repositories.UserRepository, uowFactory *repositories.UnitOfWorkFactory, logger *slog.Logger) *UserHandler {
+	return &UserHandler{UserRepo: userRepo, uowFactory: uowFactory, Logger: logger}
 }
 
 // GetUser retrieve a specific user object
@@ -37,6 +39,7 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 
 	if err != nil {
+		h.Logger.Error("error parsing ID", "err", err, "id", id)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "User's ID must be a valid UUID."})
 		return
 	}
@@ -46,6 +49,8 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+
+	h.Logger.Debug("Successfully retrieved the user", "user_id", user.ID)
 
 	c.JSON(http.StatusOK, dto.APIResponse[dto.UserResponse]{
 		Status: http.StatusOK,

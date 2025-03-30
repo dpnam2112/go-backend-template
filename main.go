@@ -58,6 +58,7 @@ func main() {
 		providers.RepositoriesModule,
 		providers.HandlersModule,
 		providers.RouterModule,
+		providers.LoggerModule,
 
 		// Start Gin server with config-based host/port
 		fx.Invoke(StartServer),
