@@ -16,7 +16,7 @@ import (
 // UserHandler struct
 type UserHandler struct {
 	uowFactory *repositories.UnitOfWorkFactory
-	Logger		*slog.Logger
+	Logger     *slog.Logger
 	UserRepo   *repositories.UserRepository
 }
 

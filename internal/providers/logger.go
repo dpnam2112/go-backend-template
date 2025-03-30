@@ -32,4 +32,3 @@ func ProvideLogger(cfg *config.Config) *slog.Logger {
 var LoggerModule = fx.Module("logger",
 	fx.Provide(ProvideLogger),
 )
-
